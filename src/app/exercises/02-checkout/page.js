@@ -8,17 +8,32 @@ import CheckoutFlow from './CheckoutFlow';
 import './styles.css';
 
 function CheckoutExercise() {
-  const [items, dispatch] = React.useReducer(
-    reducer,
-    []
-  );
+  const [items, dispatch] = React.useReducer(reducer, null);
+
+  React.useEffect(() => {
+    const savedItems = window.localStorage.getItem(
+      'cart-items',
+      JSON.parse(items)
+    );
+
+    dispatch({
+      type: 'initialize',
+      items: savedItems ? JSON.parse(savedItems) : [],
+    });
+  }, []);
+
+  React.useEffect(() => {
+    if (items !== null) {
+      window.localStorage.setItem('cart-items', JSON.stringify(items));
+    }
+  }, [items]);
 
   return (
     <>
       <h1>Neighborhood Shop</h1>
 
       <main>
-        <div className="items">
+        <div className='items'>
           {DATA.map((item) => (
             <StoreItem
               key={item.id}
